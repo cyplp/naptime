@@ -17,7 +17,7 @@ use hyper::Request as hr;
 use futures::{future, Future};
 use hyper_tls::HttpsConnector;
 
-const APP: &str = "rurl";
+const APP: &str = "naptime";
 const VERSION: &str = "1.0";
 
 #[derive(Debug)]

@@ -36,6 +36,37 @@ impl Request {
         self.verb.is_empty() || self.url.is_empty()
     }
 
+    fn is_header(line: &str) -> bool {
+        line.contains(": ")
+    }
+
+    pub fn from_vec(buffer: Vec<String>) -> Request {
+        let first = buffer[0].split(' ').collect::<Vec<&str>>();
+
+        let mut request = Request::new(first[0].to_string(), first[1..].join(" "));
+
+        let mut body = false;
+        let mut tmp: Vec<String> = Vec::new();
+
+        for line in buffer.iter().skip(1) {
+            if !body {
+                if Request::is_header(&line) {
+                    let headers = line.split(": ").collect::<Vec<&str>>();
+                    request.add_header(napheader::Header::new(headers[0].to_string(), headers[1..].join(": ")));
+                } else {
+                    body = true;
+                    tmp.push(line.to_string());
+                }
+            } else {
+                tmp.push(line.to_string());
+            }
+        }
+        if !tmp.is_empty() {
+            request.add_body(tmp.join("\n"));
+        }
+        request
+    }
+
     pub fn run(&self) {
         let mut req = hr::builder();
         req.method(self.verb.as_str());

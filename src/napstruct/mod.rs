@@ -55,9 +55,10 @@ impl Request {
                     request.add_header(napheader::Header::new(headers[0].to_string(), headers[1..].join(": ")));
                 } else {
                     body = true;
-                    tmp.push(line.to_string());
                 }
-            } else {
+            }
+
+            if body {
                 tmp.push(line.to_string());
             }
         }

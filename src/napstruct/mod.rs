@@ -58,3 +58,20 @@ impl Request {
         }));
     }
 }
+
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let r = Request::new("POST".to_string(), "https://some.url".to_string());
+        assert_eq!(r.verb, "POST");
+        assert_eq!(r.url, "https://some.url");
+        assert_eq!(r.headers.is_empty(), true);
+        assert_eq!(r.body.is_empty(), true);
+    }
+
+}

@@ -38,7 +38,7 @@ pub fn vec2request(buffer: Vec<String>) -> napstruct::Request {
         if !body {
             if is_header(&line) {
                 let headers = line.split(": ").collect::<Vec<&str>>();
-                request.add_header(napstruct::Header::new(headers[0].to_string(), headers[1..].join(": ")));
+                request.add_header(napstruct::napheader::Header::new(headers[0].to_string(), headers[1..].join(": ")));
             } else {
                 body = true;
                 tmp.push(line.to_string());

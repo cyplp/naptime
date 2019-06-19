@@ -4,23 +4,13 @@ use hyper::Request as hr;
 
 use hyper_tls::HttpsConnector;
 
-#[derive(Debug)]
-pub struct Header {
-    name: String,
-    value: String,
-}
-
-impl Header {
-    pub fn new(name: String, value: String) -> Header {
-        Header { name, value }
-    }
-}
+pub mod napheader;
 
 #[derive(Debug)]
 pub struct Request {
     verb: String,
     url: String,
-    headers: Vec<Header>,
+    headers: Vec<napheader::Header>,
     body: String,
 }
 
@@ -34,7 +24,7 @@ impl Request {
         }
     }
 
-    pub fn add_header(&mut self, header: Header) {
+    pub fn add_header(&mut self, header: napheader::Header) {
         self.headers.push(header);
     }
 
@@ -45,13 +35,16 @@ impl Request {
     pub fn is_empty(&self) -> bool {
         self.verb.is_empty() || self.url.is_empty()
     }
+
     pub fn run(&self) {
         let mut req = hr::builder();
         req.method(self.verb.as_str());
         req.uri(self.url.as_str());
+
         for header in &self.headers {
             req.header(header.name.as_str(), header.value.as_str());
         }
+
         let todo = req.body(hyper::Body::from(self.body.clone())).unwrap();
         println!("{:?}", self);
         println!("{:?}", todo);

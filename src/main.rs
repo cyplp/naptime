@@ -9,14 +9,9 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::vec::Vec;
 
-//use hyper::Request as hr;
-
 use clap::{App, Arg};
 
 pub mod napstruct;
-
-//use self::napstruct::Request;
-//use self::napstruct::Header;
 
 const APP: &str = "naptime";
 const VERSION: &str = "1.0";

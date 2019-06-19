@@ -57,7 +57,6 @@ fn main() {
 
     let filename = matches.value_of("file").unwrap();
     let requests = parse(filename).unwrap();
-    println!("{:?}", requests);
     for request in requests {
         request.run();
     }

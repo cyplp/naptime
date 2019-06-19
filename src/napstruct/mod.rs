@@ -69,6 +69,7 @@ impl Request {
     }
 
     pub fn run(&self) {
+        // TODO : refactor that
         let mut req = hr::builder();
         req.method(self.verb.as_str());
         req.uri(self.url.as_str());

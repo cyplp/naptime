@@ -91,4 +91,16 @@ mod test {
         assert_eq!(r.body.is_empty(), false);
         assert_eq!(r.body, "body");
     }
+
+    #[test]
+    fn test_is_empty() {
+        let r = Request::new("POST".to_string(), "https://some.url".to_string());
+        assert_eq!(r.is_empty(), false);
+
+        let r = Request::new("".to_string(), "https://some.url".to_string());
+        assert_eq!(r.is_empty(), true);
+
+        let r = Request::new("POST".to_string(), "".to_string());
+        assert_eq!(r.is_empty(), true);
+    }
 }

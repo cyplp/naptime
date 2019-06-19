@@ -140,4 +140,13 @@ mod test {
         assert_eq!(Request::is_header("Content: application/json"), true);
         assert_eq!(Request::is_header("Content :application/json"), false);
     }
+
+    #[test]
+    fn test_from_vec() {
+        let v = vec!("POST https://some.url".to_string(),
+                     "SomeHeader: SomeValue".to_string(),
+                     "{\"some\": \"body\"}".to_string());
+        let r = Request::from_vec(v);
+        assert_eq!(r.verb, "POST");
+    }
 }

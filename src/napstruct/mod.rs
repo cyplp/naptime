@@ -145,8 +145,14 @@ mod test {
     fn test_from_vec() {
         let v = vec!("POST https://some.url".to_string(),
                      "SomeHeader: SomeValue".to_string(),
-                     "{\"some\": \"body\"}".to_string());
+                     "{\"some\": \"body\",".to_string(),
+                     "\"other\":\"value\"}".to_string());
         let r = Request::from_vec(v);
         assert_eq!(r.verb, "POST");
+        assert_eq!(r.is_empty(), false);
+
+        let v = vec!("".to_string());
+        let r = Request::from_vec(v);
+        assert_eq!(r.is_empty(), true);
     }
 }

@@ -79,8 +79,7 @@ impl Request {
         }
 
         let todo = req.body(hyper::Body::from(self.body.clone())).unwrap();
-        println!("{:?}", self);
-        println!("{:?}", todo);
+
         tokio::run(future::lazy(|| {
             // 4 is number of blocking DNS threads
             let https = HttpsConnector::new(4).unwrap();

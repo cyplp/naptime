@@ -82,4 +82,13 @@ mod test {
         assert_eq!(r.headers.is_empty(), false);
         assert_eq!(r.headers[0], napheader::Header::new("some".to_string(), "header".to_string()));
     }
+
+    #[test]
+    fn test_add_body() {
+        let mut r = Request::new("POST".to_string(), "https://some.url".to_string());
+        assert_eq!(r.body.is_empty(), true);
+        r.add_body("body".to_string());
+        assert_eq!(r.body.is_empty(), false);
+        assert_eq!(r.body, "body");
+    }
 }

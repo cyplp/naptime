@@ -91,6 +91,8 @@ impl Request {
 }
 
 
+
+
 #[cfg(test)]
 mod test {
 
@@ -133,5 +135,11 @@ mod test {
 
         let r = Request::new("POST".to_string(), "".to_string());
         assert_eq!(r.is_empty(), true);
+    }
+
+    #[test]
+    fn test_is_header() {
+        assert_eq!(Request::is_header("Content: application/json"), true);
+        assert_eq!(Request::is_header("Content :application/json"), false);
     }
 }

@@ -1,8 +1,4 @@
-use futures::{future, Future};
-use hyper::Client;
-use hyper::Request as hr;
-
-use hyper_tls::HttpsConnector;
+use reqwest;
 
 pub mod napheader;
 
@@ -70,24 +66,32 @@ impl Request {
 
     pub fn run(&self) {
         // TODO : refactor that
-        let mut req = hr::builder();
-        req.method(self.verb.as_str());
-        req.uri(self.url.as_str());
+        let client = reqwest::Client::new();
+        let mut req = client.request(reqwest::Method::from_bytes(self.verb.as_bytes()).unwrap(),
+                                     self.url.as_str());
 
         for header in &self.headers {
-            req.header(header.name.as_str(), header.value.as_str());
+           req = req.header(header.name.as_str(), header.value.as_str());
         }
 
-        let todo = req.body(hyper::Body::from(self.body.clone())).unwrap();
+        req = req.body(self.body.clone());
+        let mut res = req.send().unwrap();
 
-        tokio::run(future::lazy(|| {
-            // 4 is number of blocking DNS threads
-            let https = HttpsConnector::new(4).unwrap();
-            let client = Client::builder().build::<_, hyper::Body>(https);
-            client.request(todo)
-                .map(|res| println!("{:?}", res.body()))
-                .map_err(|e| println!("request error: {}", e))
-        }));
+        println!("{}", res.text().unwrap());
+        println!("// {} {}", self.verb, self.url);
+        println!("// {:?} {}", res.version(), res.status());
+
+        for (key, value) in res.headers().iter() {
+            println!("// {}: {}", key, value.to_str().unwrap());
+        }
+        // tokio::run(future::lazy(|| {
+        //     // 4 is number of blocking DNS threads
+        //     let https = HttpsConnector::new(4).unwrap();
+        //     let client = Client::builder().build::<_, hyper::Body>(https);
+        //     client.request(todo)
+        //         .map(|res| println!("{:?}", res.body()))
+        //         .map_err(|e| println!("request error: {}", e))
+        // }));
     }
 }
 

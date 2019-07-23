@@ -84,14 +84,6 @@ impl Request {
         for (key, value) in res.headers().iter() {
             println!("// {}: {}", key, value.to_str().unwrap());
         }
-        // tokio::run(future::lazy(|| {
-        //     // 4 is number of blocking DNS threads
-        //     let https = HttpsConnector::new(4).unwrap();
-        //     let client = Client::builder().build::<_, hyper::Body>(https);
-        //     client.request(todo)
-        //         .map(|res| println!("{:?}", res.body()))
-        //         .map_err(|e| println!("request error: {}", e))
-        // }));
     }
 }
 

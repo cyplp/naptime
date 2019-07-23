@@ -1,9 +1,4 @@
 extern crate clap;
-extern crate http;
-extern crate hyper;
-extern crate futures;
-extern crate hyper_tls;
-extern crate tokio;
 
 use std::fs::File;
 use std::io::{BufRead, BufReader};

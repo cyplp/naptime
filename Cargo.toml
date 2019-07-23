@@ -6,9 +6,4 @@ edition = "2018"
 
 [dependencies]
 clap = "*"
-hyper = "*"
-http="*"
-futures = "*"
-tokio = "*"
-hyper-tls = "*"
 reqwest = "*"

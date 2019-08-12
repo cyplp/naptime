@@ -52,7 +52,7 @@ fn main() {
             Arg::with_name("select")
                 .short("s")
                 .long("select")
-                .help("select some requests")
+                .help("select only some requests as <index1,index2,index3...> start at 1")
                 .takes_value(true))
         .get_matches();
 

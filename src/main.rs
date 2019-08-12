@@ -90,10 +90,10 @@ fn main() {
 
         let mut res = request.send();
 
-        first = false;
         if !first {
             println!("");
         }
+        first = false;
 
         println!("{}", res.text().unwrap());
         println!("// {} {}", request.verb, request.url);

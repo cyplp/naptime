@@ -4,10 +4,10 @@ pub mod napheader;
 
 #[derive(Debug)]
 pub struct Request {
-    verb: String,
-    url: String,
-    headers: Vec<napheader::Header>,
-    body: String,
+    pub verb: String,
+    pub url: String,
+    pub headers: Vec<napheader::Header>,
+    pub body: String,
 }
 
 impl Request {
@@ -64,7 +64,7 @@ impl Request {
         request
     }
 
-    pub fn run(&self) {
+    pub fn run(&self) -> reqwest::Response{
         // TODO : refactor that
         let client = reqwest::Client::new();
         let mut req = client.request(reqwest::Method::from_bytes(self.verb.as_bytes()).unwrap(),
@@ -75,15 +75,9 @@ impl Request {
         }
 
         req = req.body(self.body.clone());
-        let mut res = req.send().unwrap();
+        let res = req.send().unwrap();
 
-        println!("{}", res.text().unwrap());
-        println!("// {} {}", self.verb, self.url);
-        println!("// {:?} {}", res.version(), res.status());
-
-        for (key, value) in res.headers().iter() {
-            println!("// {}: {}", key, value.to_str().unwrap());
-        }
+        res
     }
 }
 

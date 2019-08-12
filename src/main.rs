@@ -71,7 +71,17 @@ fn main() {
                 continue;
             }
         }
-        request.run();
+
+        let mut res = request.run();
+
+        println!("{}", res.text().unwrap());
+        println!("// {} {}", request.verb, request.url);
+        println!("// {:?} {}", res.version(), res.status());
+
+        for (key, value) in res.headers().iter() {
+            println!("// {}: {}", key, value.to_str().unwrap());
+        }
+
         if matches.is_present("interval"){
             thread::sleep(interval);
         }

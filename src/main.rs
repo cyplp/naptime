@@ -65,7 +65,9 @@ fn main() {
     let filename = matches.value_of("file").unwrap();
     let requests = parse(filename).unwrap();
 
+    let mut first = true;
     for (num, request) in requests.iter().enumerate() {
+
         if matches.is_present("select") {
             if !selected.contains(&(num + 1)) {
                 continue;
@@ -73,6 +75,11 @@ fn main() {
         }
 
         let mut res = request.send();
+
+        first = false;
+        if !first {
+            println!("");
+        }
 
         println!("{}", res.text().unwrap());
         println!("// {} {}", request.verb, request.url);

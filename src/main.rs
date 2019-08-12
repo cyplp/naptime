@@ -48,6 +48,12 @@ fn main() {
                 .long("interval")
                 .help("interval between two requests in milliseconds")
                 .takes_value(true))
+        .arg(
+            Arg::with_name("select")
+                .short("s")
+                .long("select")
+                .help("select some requests")
+                .takes_value(true))
         .get_matches();
 
     let filename = matches.value_of("file").unwrap();
@@ -55,9 +61,17 @@ fn main() {
     let str_interval: u64 = matches.value_of("interval").unwrap_or("0").parse().unwrap();
     let interval = time::Duration::from_millis(str_interval);
 
+    let str_select = matches.value_of("select").unwrap_or("");
+    let selected: Vec<usize> = str_select.split(",").map(|current| current.parse().unwrap()).collect();
+
     let requests = parse(filename).unwrap();
 
-    for request in requests {
+    for (num, request) in requests.iter().enumerate() {
+        if matches.is_present("select") {
+            if !selected.contains(&(num + 1)) {
+                continue;
+            }
+        }
         request.run();
         if matches.is_present("interval"){
             thread::sleep(interval);

@@ -4,6 +4,7 @@ extern crate clap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::vec::Vec;
+use std::collections::HashMap;
 use std::{thread, time};
 
 use clap::{App, Arg};
@@ -54,6 +55,13 @@ fn main() {
                 .long("select")
                 .help("select only some requests as <index1,index2,index3...> start at 1")
                 .takes_value(true))
+        .arg(
+            Arg::with_name("parameter")
+                .short("p")
+                .long("parameter")
+                .help("")
+                .multiple(true)
+                .takes_value(true))
         .get_matches();
 
     let str_interval: u64 = matches.value_of("interval").unwrap_or("0").parse().unwrap();
@@ -62,12 +70,18 @@ fn main() {
     let str_select = matches.value_of("select").unwrap_or("");
     let selected: Vec<usize> = str_select.split(",").map(|current| current.parse().unwrap()).collect();
 
+    // TODO function
+    let mut params: HashMap<&str, &str> = HashMap::new();
+    for current in matches.values_of("parameter").unwrap(){
+        let tmp = current.split("=").collect::<Vec<&str>>();
+        params.insert(tmp[0], tmp[1]);
+    }
+
     let filename = matches.value_of("file").unwrap();
     let requests = parse(filename).unwrap();
 
     let mut first = true;
     for (num, request) in requests.iter().enumerate() {
-
         if matches.is_present("select") {
             if !selected.contains(&(num + 1)) {
                 continue;

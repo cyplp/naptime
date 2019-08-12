@@ -40,7 +40,7 @@ fn main() {
             Arg::with_name("file")
                 .short("f")
                 .long("file")
-                .help("File containing urls")
+                .help("File containing requests with restclient.el format")
                 .takes_value(true))
         .arg(
             Arg::with_name("interval")

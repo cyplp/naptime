@@ -52,9 +52,12 @@ fn main() {
         .get_matches();
 
     let filename = matches.value_of("file").unwrap();
+
     let str_interval: u64 = matches.value_of("interval").unwrap_or("0").parse().unwrap();
     let interval = time::Duration::from_millis(str_interval);
+
     let requests = parse(filename).unwrap();
+
     for request in requests {
         request.run();
         thread::sleep(interval);

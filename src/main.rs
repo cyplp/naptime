@@ -60,6 +60,8 @@ fn main() {
 
     for request in requests {
         request.run();
-        thread::sleep(interval);
+        if matches.is_present("interval"){
+            thread::sleep(interval);
+        }
     }
 }

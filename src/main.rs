@@ -47,7 +47,7 @@ fn main() {
             Arg::with_name("interval")
                 .short("i")
                 .long("interval")
-                .help("interval between two requests in seconds")
+                .help("interval between two requests in milliseconds")
                 .takes_value(true))
         .get_matches();
 

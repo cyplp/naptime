@@ -1,3 +1,4 @@
+#[macro_use]
 extern crate clap;
 
 use std::fs::File;
@@ -8,9 +9,6 @@ use std::{thread, time};
 use clap::{App, Arg};
 
 pub mod napstruct;
-
-const APP: &str = "naptime";
-const VERSION: &str = "1.0";
 
 pub fn parse(filename: &str) -> Option<Vec<napstruct::Request>> {
     let mut result: Vec<napstruct::Request> = Vec::new();
@@ -35,8 +33,9 @@ pub fn parse(filename: &str) -> Option<Vec<napstruct::Request>> {
 }
 
 fn main() {
-    let matches = App::new(APP)
-        .version(VERSION)
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!())
         .arg(
             Arg::with_name("file")
                 .short("f")

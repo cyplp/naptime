@@ -3,6 +3,7 @@ extern crate clap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::vec::Vec;
+use std::{thread, time};
 
 use clap::{App, Arg};
 
@@ -41,13 +42,21 @@ fn main() {
                 .short("f")
                 .long("file")
                 .help("File containing urls")
-                .takes_value(true),
-        )
+                .takes_value(true))
+        .arg(
+            Arg::with_name("interval")
+                .short("i")
+                .long("interval")
+                .help("interval between two requests in seconds")
+                .takes_value(true))
         .get_matches();
 
     let filename = matches.value_of("file").unwrap();
+    let str_interval: u64 = matches.value_of("interval").unwrap_or("0").parse().unwrap();
+    let interval = time::Duration::from_millis(str_interval);
     let requests = parse(filename).unwrap();
     for request in requests {
         request.run();
+        thread::sleep(interval);
     }
 }

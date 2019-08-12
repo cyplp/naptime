@@ -72,7 +72,7 @@ fn main() {
             }
         }
 
-        let mut res = request.run();
+        let mut res = request.send();
 
         println!("{}", res.text().unwrap());
         println!("// {} {}", request.verb, request.url);

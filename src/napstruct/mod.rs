@@ -64,7 +64,7 @@ impl Request {
         request
     }
 
-    pub fn run(&self) -> reqwest::Response{
+    pub fn send(&self) -> reqwest::Response{
         // TODO : refactor that
         let client = reqwest::Client::new();
         let mut req = client.request(reqwest::Method::from_bytes(self.verb.as_bytes()).unwrap(),

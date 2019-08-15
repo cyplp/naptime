@@ -154,4 +154,20 @@ mod test {
         let r = Request::from_vec(v);
         assert_eq!(r.is_empty(), true);
     }
+
+    #[test]
+    fn test_fix_param() {
+        let v = vec!("POST :url".to_string(),
+                     "SomeHeader: SomeValue".to_string(),
+                     "{\"some\": \"body\",".to_string(),
+                     "\"other\":\"value\"}".to_string());
+        let mut r = Request::from_vec(v);
+        assert_eq!(r.url, ":url");
+
+        let mut params: HashMap<&str, &str> = HashMap::new();
+        params.insert("url", "http://some.url");
+
+        r.fix_params(&params);
+        assert_eq!(r.url, "http://some.url");
+    }
 }

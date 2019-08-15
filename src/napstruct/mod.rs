@@ -194,4 +194,17 @@ mod test {
         r.fix_params(&params);
         assert_eq!(r.url, "http://some.url");
     }
+
+    #[test]
+    fn test_is_param() {
+        let line = ":some = param";
+        assert_eq!(Request::is_param(line), true);
+
+        let line = ":some := dyn param";
+        assert_eq!(Request::is_param(line), false);
+
+        let line = "POST http://some.url";
+        assert_eq!(Request::is_param(line), false);
+
+    }
 }

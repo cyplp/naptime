@@ -2,10 +2,10 @@
 extern crate clap;
 extern crate regex;
 
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::vec::Vec;
-use std::collections::HashMap;
 use std::{thread, time};
 
 use clap::{App, Arg};
@@ -44,37 +44,44 @@ fn main() {
                 .short("f")
                 .long("file")
                 .help("File containing requests with restclient.el format")
-                .takes_value(true))
+                .takes_value(true),
+        )
         .arg(
             Arg::with_name("interval")
                 .short("i")
                 .long("interval")
                 .help("interval between two requests in milliseconds")
-                .takes_value(true))
+                .takes_value(true),
+        )
         .arg(
             Arg::with_name("select")
                 .short("s")
                 .long("select")
                 .help("select only some requests as <index1,index2,index3...> start at 1")
-                .takes_value(true))
+                .takes_value(true),
+        )
         .arg(
             Arg::with_name("parameter")
                 .short("p")
                 .long("parameter")
                 .help("")
                 .multiple(true)
-                .takes_value(true))
+                .takes_value(true),
+        )
         .get_matches();
 
     let str_interval: u64 = matches.value_of("interval").unwrap_or("0").parse().unwrap();
     let interval = time::Duration::from_millis(str_interval);
 
     let str_select = matches.value_of("select").unwrap_or("");
-    let selected: Vec<usize> = str_select.split(",").map(|current| current.parse().unwrap()).collect();
+    let selected: Vec<usize> = str_select
+        .split(",")
+        .map(|current| current.parse().unwrap())
+        .collect();
 
     // TODO function
     let mut params: HashMap<&str, &str> = HashMap::new();
-    for current in matches.values_of("parameter").unwrap(){
+    for current in matches.values_of("parameter").unwrap() {
         let tmp = current.split("=").collect::<Vec<&str>>();
         params.insert(tmp[0], tmp[1]);
     }
@@ -105,7 +112,7 @@ fn main() {
             println!("// {}: {}", key, value.to_str().unwrap());
         }
 
-        if matches.is_present("interval"){
+        if matches.is_present("interval") {
             thread::sleep(interval);
         }
     }

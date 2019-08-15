@@ -1,9 +1,8 @@
+use regex::Regex;
 use reqwest;
 use std::collections::HashMap;
-use regex::Regex;
 
 pub mod napheader;
-
 
 #[derive(Debug)]
 pub struct Request {
@@ -52,7 +51,10 @@ impl Request {
             if !body {
                 if Request::is_header(&line) {
                     let headers = line.split(": ").collect::<Vec<&str>>();
-                    request.add_header(napheader::Header::new(headers[0].to_string(), headers[1..].join(": ")));
+                    request.add_header(napheader::Header::new(
+                        headers[0].to_string(),
+                        headers[1..].join(": "),
+                    ));
                 } else {
                     body = true;
                 }
@@ -69,20 +71,22 @@ impl Request {
     }
 
     pub fn fix_params(&mut self, params: &HashMap<&str, &str>) {
-        for (key, value) in params{
+        for (key, value) in params {
             let tmp: String = format!(":{}", key);
             self.url = self.url.replace(tmp.as_str(), value);
         }
     }
 
-    pub fn send(&self) -> reqwest::Response{
+    pub fn send(&self) -> reqwest::Response {
         // TODO : refactor that
         let client = reqwest::Client::new();
-        let mut req = client.request(reqwest::Method::from_bytes(self.verb.as_bytes()).unwrap(),
-                                     self.url.as_str());
+        let mut req = client.request(
+            reqwest::Method::from_bytes(self.verb.as_bytes()).unwrap(),
+            self.url.as_str(),
+        );
 
         for header in &self.headers {
-           req = req.header(header.name.as_str(), header.value.as_str());
+            req = req.header(header.name.as_str(), header.value.as_str());
         }
 
         req = req.body(self.body.clone());
@@ -91,7 +95,6 @@ impl Request {
         res
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -111,9 +114,15 @@ mod test {
     fn test_add_header() {
         let mut r = Request::new("POST".to_string(), "https://some.url".to_string());
         assert_eq!(r.headers.is_empty(), true);
-        r.add_header(napheader::Header::new("some".to_string(), "header".to_string()));
+        r.add_header(napheader::Header::new(
+            "some".to_string(),
+            "header".to_string(),
+        ));
         assert_eq!(r.headers.is_empty(), false);
-        assert_eq!(r.headers[0], napheader::Header::new("some".to_string(), "header".to_string()));
+        assert_eq!(
+            r.headers[0],
+            napheader::Header::new("some".to_string(), "header".to_string())
+        );
     }
 
     #[test]
@@ -146,25 +155,29 @@ mod test {
 
     #[test]
     fn test_from_vec() {
-        let v = vec!("POST https://some.url".to_string(),
-                     "SomeHeader: SomeValue".to_string(),
-                     "{\"some\": \"body\",".to_string(),
-                     "\"other\":\"value\"}".to_string());
+        let v = vec![
+            "POST https://some.url".to_string(),
+            "SomeHeader: SomeValue".to_string(),
+            "{\"some\": \"body\",".to_string(),
+            "\"other\":\"value\"}".to_string(),
+        ];
         let r = Request::from_vec(v);
         assert_eq!(r.verb, "POST");
         assert_eq!(r.is_empty(), false);
 
-        let v = vec!("".to_string());
+        let v = vec!["".to_string()];
         let r = Request::from_vec(v);
         assert_eq!(r.is_empty(), true);
     }
 
     #[test]
     fn test_fix_param() {
-        let v = vec!("POST :url".to_string(),
-                     "SomeHeader: SomeValue".to_string(),
-                     "{\"some\": \"body\",".to_string(),
-                     "\"other\":\"value\"}".to_string());
+        let v = vec![
+            "POST :url".to_string(),
+            "SomeHeader: SomeValue".to_string(),
+            "{\"some\": \"body\",".to_string(),
+            "\"other\":\"value\"}".to_string(),
+        ];
         let mut r = Request::from_vec(v);
         assert_eq!(r.url, ":url");
 

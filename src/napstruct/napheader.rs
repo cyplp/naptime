@@ -1,4 +1,3 @@
-
 #[derive(Debug)]
 pub struct Header {
     pub name: String,
@@ -16,7 +15,6 @@ impl PartialEq for Header {
         self.name == other.name && self.value == other.value
     }
 }
-
 
 #[cfg(test)]
 mod test {

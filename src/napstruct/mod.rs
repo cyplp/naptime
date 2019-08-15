@@ -40,6 +40,12 @@ impl Request {
         is_header.is_match(line)
     }
 
+    fn is_param(line: &str) -> bool {
+        // TODO refactor this
+        let is_param = Regex::new(r":\w+ = .*$").unwrap();
+        is_param.is_match(line)
+    }
+
     pub fn from_vec(buffer: Vec<String>) -> Request {
         let first = buffer[0].split(' ').collect::<Vec<&str>>();
 

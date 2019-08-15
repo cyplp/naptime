@@ -34,6 +34,7 @@ impl Request {
     }
 
     fn is_header(line: &str) -> bool {
+        // TODO: fix crappy detection
         line.contains(": ")
     }
 

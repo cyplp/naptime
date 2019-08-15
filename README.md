@@ -54,6 +54,7 @@ OPTIONS:
   * [ ] html output
   * [ ] xml output
 * [ ] assert on response
+* [ ] coverage 100%
 
 ## name
 

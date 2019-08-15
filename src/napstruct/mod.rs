@@ -36,7 +36,7 @@ impl Request {
     }
 
     fn is_header(line: &str) -> bool {
-        let  is_header: Regex = Regex::new(r"^[\w-]+: .*$").unwrap();
+        let is_header: Regex = Regex::new(r"^[\w-]+: .*$").unwrap();
         is_header.is_match(line)
     }
 

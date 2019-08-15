@@ -1,7 +1,9 @@
 use reqwest;
 use std::collections::HashMap;
+use regex::Regex;
 
 pub mod napheader;
+
 
 #[derive(Debug)]
 pub struct Request {
@@ -34,8 +36,8 @@ impl Request {
     }
 
     fn is_header(line: &str) -> bool {
-        // TODO: fix crappy detection
-        line.contains(": ")
+        let  is_header: Regex = Regex::new(r"^[\w-]+: .*$").unwrap();
+        is_header.is_match(line)
     }
 
     pub fn from_vec(buffer: Vec<String>) -> Request {
@@ -139,6 +141,7 @@ mod test {
     fn test_is_header() {
         assert_eq!(Request::is_header("Content: application/json"), true);
         assert_eq!(Request::is_header("Content :application/json"), false);
+        assert_eq!(Request::is_header("http://some.url:80"), false);
     }
 
     #[test]

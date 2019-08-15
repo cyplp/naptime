@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate clap;
+extern crate regex;
 
 use std::fs::File;
 use std::io::{BufRead, BufReader};

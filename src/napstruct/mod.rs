@@ -1,4 +1,5 @@
 use reqwest;
+use std::collections::HashMap;
 
 pub mod napheader;
 
@@ -62,6 +63,13 @@ impl Request {
             request.add_body(tmp.join("\n"));
         }
         request
+    }
+
+    pub fn fix_params(&mut self, params: &HashMap<&str, &str>) {
+        for (key, value) in params{
+            let tmp: String = format!(":{}", key);
+            self.url = self.url.replace(tmp.as_str(), value);
+        }
     }
 
     pub fn send(&self) -> reqwest::Response{

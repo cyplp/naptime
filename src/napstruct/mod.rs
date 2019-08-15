@@ -213,4 +213,17 @@ mod test {
         assert_eq!(Request::is_param(line), false);
 
     }
+
+    #[test]
+    fn test_is_dyn_param() {
+        let line = ":some = param";
+        assert_eq!(Request::is_dyn_param(line), false);
+
+        let line = ":some := dyn param";
+        assert_eq!(Request::is_dyn_param(line), true);
+
+        let line = "POST http://some.url";
+        assert_eq!(Request::is_dyn_param(line), false);
+
+    }
 }

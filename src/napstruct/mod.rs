@@ -46,6 +46,12 @@ impl Request {
         is_param.is_match(line)
     }
 
+    fn is_dyn_param(line: &str) -> bool {
+        // TODO refactor this
+        let is_dyn_param = Regex::new(r":\w+ := .*$").unwrap();
+        is_dyn_param.is_match(line)
+    }
+
     pub fn from_vec(buffer: Vec<String>) -> Request {
         let first = buffer[0].split(' ').collect::<Vec<&str>>();
 

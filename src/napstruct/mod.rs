@@ -68,7 +68,13 @@ impl Request {
                         headers[0].to_string(),
                         headers[1..].join(": "),
                     ));
-                } else {
+                } else if Request::is_param(line) {
+                    // TODO
+
+                } else if Request::is_dyn_param(line){
+                    //TODO
+                }
+                else {
                     body = true;
                 }
             }
@@ -171,6 +177,8 @@ mod test {
         let v = vec![
             "POST https://some.url".to_string(),
             "SomeHeader: SomeValue".to_string(),
+            ":some_param=foo".to_string(),
+            ":some_dyn_param:=foo()".to_string(),
             "{\"some\": \"body\",".to_string(),
             "\"other\":\"value\"}".to_string(),
         ];

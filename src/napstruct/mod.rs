@@ -3,6 +3,7 @@ use reqwest;
 use std::collections::HashMap;
 
 pub mod napheader;
+pub mod napoption;
 
 #[derive(Debug)]
 pub struct Request {

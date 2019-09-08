@@ -12,12 +12,13 @@ use clap::{App, Arg};
 
 pub mod napstruct;
 
+// TODO move this in another file
 pub trait ResponseExt {
     fn display_body(&mut self);
     fn display_headers(&self);
 }
 
-
+// TODO move this in another file
 impl ResponseExt for reqwest::Response {
     fn display_body(&mut self) {
         println!("{}", self.text().unwrap());

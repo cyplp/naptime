@@ -1,15 +1,17 @@
+use std::time;
+
 #[derive(Debug)]
 pub struct NapOptions {
-    pub interval: u64,
+    pub interval: time::Duration,
     pub selecteds: Vec<usize>,
 }
 
 impl NapOptions {
     pub fn new() -> NapOptions {
-        NapOptions {interval: 0,
+        NapOptions {interval: time::Duration::from_millis(0),
                     selecteds: Vec::new()}
     }
-    pub fn set_interval(&mut self, interval: u64){
+    pub fn set_interval(&mut self, interval: time::Duration){
         self.interval = interval;
     }
 
@@ -26,16 +28,16 @@ mod test {
     #[test]
     fn test_new() {
         let no = NapOptions::new();
-        assert_eq!(no.interval, 0);
+        assert_eq!(no.interval, time::Duration::from_millis(0));
         assert_eq!(no.selecteds.len(), 0);
     }
 
     #[test]
     fn test_set_interval() {
         let mut no = NapOptions::new();
-        assert_eq!(no.interval, 0);
-        no.set_interval(4);
-        assert_eq!(no.interval, 4);
+        assert_eq!(no.interval, time::Duration::from_millis(0));
+        no.set_interval(time::Duration::from_millis(4));
+        assert_eq!(no.interval, time::Duration::from_millis(4));
     }
 
     #[test]

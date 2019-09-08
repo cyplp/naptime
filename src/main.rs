@@ -35,8 +35,7 @@ impl ResponseExt for reqwest::Response {
 
 pub fn parse(filename: &str,
              params: &HashMap<&str, &str>,
-             options: &napstruct::napoption::NapOptions) -> Option<Vec<napstruct::Request>> {
-    let mut result: Vec<napstruct::Request> = Vec::new();
+             options: &napstruct::napoption::NapOptions){
     let file = File::open(filename);
     let mut tmp = Vec::<String>::new();
     let mut cpt = 0;
@@ -55,14 +54,21 @@ pub fn parse(filename: &str,
                 }
                 if !request.is_empty(){
                     request.fix_params(&params);
-                    result.push(request);
+
+                    let mut res = request.send();
+                    res.display_body();
+                    request.display();
+                    res.display_headers();
+
+                    if options.interval > time::Duration::from_millis(0){
+                        thread::sleep(options.interval);
+                    }
                 }
             }
         } else {
             tmp.push(current);
         }
     }
-    Some(result)
 }
 
 fn main() {
@@ -125,24 +131,6 @@ fn main() {
     }
 
     let filename = matches.value_of("file").unwrap();
+    parse(filename, &params, &no);
 
-    let requests = parse(filename, &params, &no).unwrap();
-
-    let mut first = true;
-    for request in requests.iter() {
-        let mut res = request.send();
-
-        if !first {
-            println!("");
-        }
-        first = false;
-
-        res.display_body();
-        request.display();
-        res.display_headers();
-
-        if matches.is_present("interval") {
-            thread::sleep(no.interval);
-        }
-    }
 }

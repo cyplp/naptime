@@ -12,21 +12,30 @@ use clap::{App, Arg};
 
 pub mod napstruct;
 
-pub fn parse(filename: &str, params: &HashMap<&str, &str>) -> Option<Vec<napstruct::Request>> {
+pub fn parse(filename: &str,
+             params: &HashMap<&str, &str>,
+             options: &napstruct::napoption::NapOptions) -> Option<Vec<napstruct::Request>> {
     let mut result: Vec<napstruct::Request> = Vec::new();
     let file = File::open(filename);
     let mut tmp = Vec::<String>::new();
+    let mut cpt = 0;
 
     for line in BufReader::new(file.unwrap()).lines() {
         let current = line.unwrap();
         if current.starts_with('#') {
             if !tmp.is_empty() {
+                cpt += 1;
                 let mut request = napstruct::Request::from_vec(tmp);
-                request.fix_params(&params);
-                if !request.is_empty() {
+
+                tmp = Vec::<String>::new();
+
+                if !options.selecteds.contains(&cpt) {
+                        continue;
+                }
+                if !request.is_empty(){
+                    request.fix_params(&params);
                     result.push(request);
                 }
-                tmp = Vec::<String>::new();
             }
         } else {
             tmp.push(current);
@@ -95,16 +104,11 @@ fn main() {
     }
 
     let filename = matches.value_of("file").unwrap();
-    let requests = parse(filename, &params).unwrap();
+
+    let requests = parse(filename, &params, &no).unwrap();
 
     let mut first = true;
-    for (num, request) in requests.iter().enumerate() {
-        if matches.is_present("select") {
-            if !no.selecteds.contains(&(num + 1)) {
-                continue;
-            }
-        }
-
+    for request in requests.iter() {
         let mut res = request.send();
 
         if !first {

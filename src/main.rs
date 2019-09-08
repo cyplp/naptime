@@ -70,14 +70,22 @@ fn main() {
         )
         .get_matches();
 
+    let mut no = napstruct::napoption::NapOptions::new();
+
     let str_interval: u64 = matches.value_of("interval").unwrap_or("0").parse().unwrap();
     let interval = time::Duration::from_millis(str_interval);
+    no.set_interval(interval);
 
+    // TODO improve select parsing
     let str_select = matches.value_of("select").unwrap_or("");
     let selected: Vec<usize> = str_select
         .split(",")
         .map(|current| current.parse().unwrap())
         .collect();
+
+    for select in selected{
+        no.add_selected(select);
+    }
 
     // TODO function
     let mut params: HashMap<&str, &str> = HashMap::new();
@@ -92,7 +100,7 @@ fn main() {
     let mut first = true;
     for (num, request) in requests.iter().enumerate() {
         if matches.is_present("select") {
-            if !selected.contains(&(num + 1)) {
+            if !no.selecteds.contains(&(num + 1)) {
                 continue;
             }
         }
@@ -113,7 +121,7 @@ fn main() {
         }
 
         if matches.is_present("interval") {
-            thread::sleep(interval);
+            thread::sleep(no.interval);
         }
     }
 }

@@ -30,13 +30,14 @@ impl ResponseExt for reqwest::Response {
         for (key, value) in self.headers().iter() {
             println!("// {}: {}", key, value.to_str().unwrap());
         }
-
     }
 }
 
-pub fn parse(filename: &str,
-             params: &HashMap<&str, &str>,
-             options: &napstruct::napoption::NapOptions){
+pub fn parse(
+    filename: &str,
+    params: &HashMap<&str, &str>,
+    options: &napstruct::napoption::NapOptions,
+) {
     let file = File::open(filename);
     let mut tmp = Vec::<String>::new();
     let mut cpt = 0;
@@ -51,9 +52,9 @@ pub fn parse(filename: &str,
                 tmp = Vec::<String>::new();
 
                 if !options.selecteds.contains(&cpt) {
-                        continue;
+                    continue;
                 }
-                if !request.is_empty(){
+                if !request.is_empty() {
                     request.fix_params(&params);
 
                     let mut res = request.send();
@@ -61,7 +62,7 @@ pub fn parse(filename: &str,
                     request.display();
                     res.display_headers();
 
-                    if options.interval > time::Duration::from_millis(0){
+                    if options.interval > time::Duration::from_millis(0) {
                         thread::sleep(options.interval);
                     }
                 }
@@ -120,7 +121,7 @@ fn main() {
         .map(|current| current.parse().unwrap())
         .collect();
 
-    for select in selected{
+    for select in selected {
         no.add_selected(select);
     }
 
@@ -133,5 +134,4 @@ fn main() {
 
     let filename = matches.value_of("file").unwrap();
     parse(filename, &params, &no);
-
 }

@@ -8,14 +8,16 @@ pub struct NapOptions {
 
 impl NapOptions {
     pub fn new() -> NapOptions {
-        NapOptions {interval: time::Duration::from_millis(0),
-                    selecteds: Vec::new()}
+        NapOptions {
+            interval: time::Duration::from_millis(0),
+            selecteds: Vec::new(),
+        }
     }
-    pub fn set_interval(&mut self, interval: time::Duration){
+    pub fn set_interval(&mut self, interval: time::Duration) {
         self.interval = interval;
     }
 
-    pub fn add_selected(&mut self, request_id: usize){
+    pub fn add_selected(&mut self, request_id: usize) {
         self.selecteds.push(request_id);
     }
 }

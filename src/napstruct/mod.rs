@@ -72,10 +72,9 @@ impl Request {
                 } else if Request::is_param(line) {
                     // TODO
 
-                } else if Request::is_dyn_param(line){
+                } else if Request::is_dyn_param(line) {
                     //TODO
-                }
-                else {
+                } else {
                     body = true;
                 }
             }
@@ -223,7 +222,6 @@ mod test {
 
         let line = "POST http://some.url";
         assert_eq!(Request::is_param(line), false);
-
     }
 
     #[test]
@@ -236,6 +234,5 @@ mod test {
 
         let line = "POST http://some.url";
         assert_eq!(Request::is_dyn_param(line), false);
-
     }
 }

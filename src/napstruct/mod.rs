@@ -114,6 +114,9 @@ impl Request {
 
         res
     }
+    pub fn display(&self) {
+        println!("// {} {}", self.verb, self.url);
+    }
 }
 
 #[cfg(test)]

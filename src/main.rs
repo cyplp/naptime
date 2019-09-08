@@ -12,6 +12,27 @@ use clap::{App, Arg};
 
 pub mod napstruct;
 
+pub trait ResponseExt {
+    fn display_body(&mut self);
+    fn display_headers(&self);
+}
+
+
+impl ResponseExt for reqwest::Response {
+    fn display_body(&mut self) {
+        println!("{}", self.text().unwrap());
+    }
+
+    fn display_headers(&self) {
+        println!("// {:?} {}", self.version(), self.status());
+
+        for (key, value) in self.headers().iter() {
+            println!("// {}: {}", key, value.to_str().unwrap());
+        }
+
+    }
+}
+
 pub fn parse(filename: &str,
              params: &HashMap<&str, &str>,
              options: &napstruct::napoption::NapOptions) -> Option<Vec<napstruct::Request>> {
@@ -116,13 +137,9 @@ fn main() {
         }
         first = false;
 
-        println!("{}", res.text().unwrap());
-        println!("// {} {}", request.verb, request.url);
-        println!("// {:?} {}", res.version(), res.status());
-
-        for (key, value) in res.headers().iter() {
-            println!("// {}: {}", key, value.to_str().unwrap());
-        }
+        res.display_body();
+        request.display();
+        res.display_headers();
 
         if matches.is_present("interval") {
             thread::sleep(no.interval);

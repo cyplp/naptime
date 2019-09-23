@@ -26,42 +26,65 @@ impl ResponseExt for reqwest::Response {
     }
 }
 
-pub fn parse(
-    filename: &str,
-    params: &HashMap<&str, &str>,
-    options: &napstruct::napoption::NapOptions,
-) {
-    let file = File::open(filename);
-    let mut tmp = Vec::<String>::new();
-    let mut cpt = 0;
+#[derive(Debug)]
+pub struct Parser<'a> {
+    filename: &'a str,
+}
 
-    for line in BufReader::new(file.unwrap()).lines() {
-        let current = line.unwrap();
-        if current.starts_with('#') {
-            if !tmp.is_empty() {
-                cpt += 1;
-                let mut request = napstruct::Request::from_vec(tmp);
+impl Parser<'_> {
+    pub fn new(filename: &str) -> Parser {
+        Parser {filename: filename}
+    }
 
-                tmp = Vec::<String>::new();
+    pub fn run(
+        &self,
+        params: &HashMap<&str, &str>,
+        options: &napstruct::napoption::NapOptions,
+    ) {
+        let file = File::open(self.filename);
+        let mut tmp = Vec::<String>::new();
+        let mut cpt = 0;
 
-                if !options.selecteds.contains(&cpt) {
-                    continue;
-                }
-                if !request.is_empty() {
-                    request.fix_params(&params);
+        for line in BufReader::new(file.unwrap()).lines() {
+            let current = line.unwrap();
+            if current.starts_with('#') {
+                if !tmp.is_empty() {
+                    cpt += 1;
+                    let mut request = napstruct::Request::from_vec(tmp);
 
-                    let mut res = request.send();
-                    res.display_body();
-                    request.display();
-                    res.display_headers();
+                    tmp = Vec::<String>::new();
 
-                    if options.interval > time::Duration::from_millis(0) {
-                        thread::sleep(options.interval);
+                    if !options.selecteds.contains(&cpt) {
+                        continue;
+                    }
+                    if !request.is_empty() {
+                        request.fix_params(&params);
+
+                        let mut res = request.send();
+                        res.display_body();
+                        request.display();
+                        res.display_headers();
+
+                        if options.interval > time::Duration::from_millis(0) {
+                            thread::sleep(options.interval);
+                        }
                     }
                 }
+            } else {
+                tmp.push(current);
             }
-        } else {
-            tmp.push(current);
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let p = Parser::new("some/file");
+        assert_eq!(p.filename, "some/file");
     }
 }

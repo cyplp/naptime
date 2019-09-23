@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 pub mod napheader;
 pub mod napoption;
+pub mod parser;
 
 #[derive(Debug)]
 pub struct Request {

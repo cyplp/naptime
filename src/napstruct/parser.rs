@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::{thread, time};
+use regex::Regex;
 
 use crate::napstruct;
 
@@ -92,36 +93,39 @@ impl Parser<'_> {
 
         for line in BufReader::new(file.unwrap()).lines() {
             let current = line.unwrap();
-            if current.starts_with('#') {
-                if !tmp.is_empty() {
-                    cpt += 1;
-                    let mut request = napstruct::Request::from_vec(tmp);
+            match self.type_line(current.as_str())
+            {
+                LineType::Comment => {
+                    if !tmp.is_empty() {
+                        cpt += 1;
+                        let mut request = napstruct::Request::from_vec(tmp);
 
-                    tmp = Vec::<String>::new();
+                        tmp = Vec::<String>::new();
 
-                    if !options.selecteds.contains(&cpt) {
-                        continue;
-                    }
-                    if !request.is_empty() {
-                        request.fix_params(&params);
+                        if !options.selecteds.contains(&cpt) {
+                            continue;
+                        }
+                        if !request.is_empty() {
+                            request.fix_params(&params);
 
-                        let mut res = request.send();
-                        res.display_body();
-                        request.display();
-                        res.display_headers();
+                            let mut res = request.send();
+                            res.display_body();
+                            request.display();
+                            res.display_headers();
 
-                        if options.interval > time::Duration::from_millis(0) {
-                            thread::sleep(options.interval);
+                            if options.interval > time::Duration::from_millis(0) {
+                                thread::sleep(options.interval);
+                            }
                         }
                     }
                 }
-            } else {
-                tmp.push(current);
+                _ => {
+                    tmp.push(current);
+                }
             }
         }
     }
 }
-
 #[cfg(test)]
 mod test {
 

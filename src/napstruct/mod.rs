@@ -1,4 +1,4 @@
-use regex::Regex;
+
 use reqwest;
 use std::collections::HashMap;
 
@@ -36,23 +36,6 @@ impl Request {
         self.verb.is_empty() || self.url.is_empty()
     }
 
-    fn is_header(line: &str) -> bool {
-        // TODO refactor this
-        let is_header: Regex = Regex::new(r"^[\w-]+: .*$").unwrap();
-        is_header.is_match(line)
-    }
-
-    fn is_param(line: &str) -> bool {
-        // TODO refactor this
-        let is_param = Regex::new(r":\w+ = .*$").unwrap();
-        is_param.is_match(line)
-    }
-
-    fn is_dyn_param(line: &str) -> bool {
-        // TODO refactor this
-        let is_dyn_param = Regex::new(r":\w+ := .*$").unwrap();
-        is_dyn_param.is_match(line)
-    }
 
     pub fn from_vec(buffer: Vec<String>) -> Request {
         let first = buffer[0].split(' ').collect::<Vec<&str>>();
@@ -64,21 +47,21 @@ impl Request {
 
         for line in buffer.iter().skip(1) {
             if !body {
-                if Request::is_header(&line) {
+                // if Request::is_header(&line) {
                     let headers = line.split(": ").collect::<Vec<&str>>();
                     request.add_header(napheader::Header::new(
                         headers[0].to_string(),
                         headers[1..].join(": "),
                     ));
-                } else if Request::is_param(line) {
-                    // TODO
+                // } else if Request::is_param(line) {
+                //     // TODO
 
-                } else if Request::is_dyn_param(line) {
-                    //TODO
+                // } else if Request::is_dyn_param(line) {
+                //     //TODO
                 } else {
                     body = true;
                 }
-            }
+//            }
 
             if body {
                 tmp.push(line.to_string());
@@ -169,12 +152,6 @@ mod test {
         assert_eq!(r.is_empty(), true);
     }
 
-    #[test]
-    fn test_is_header() {
-        assert_eq!(Request::is_header("Content: application/json"), true);
-        assert_eq!(Request::is_header("Content :application/json"), false);
-        assert_eq!(Request::is_header("http://some.url:80"), false);
-    }
 
     #[test]
     fn test_from_vec() {
@@ -213,27 +190,5 @@ mod test {
         assert_eq!(r.url, "http://some.url");
     }
 
-    #[test]
-    fn test_is_param() {
-        let line = ":some = param";
-        assert_eq!(Request::is_param(line), true);
 
-        let line = ":some := dyn param";
-        assert_eq!(Request::is_param(line), false);
-
-        let line = "POST http://some.url";
-        assert_eq!(Request::is_param(line), false);
-    }
-
-    #[test]
-    fn test_is_dyn_param() {
-        let line = ":some = param";
-        assert_eq!(Request::is_dyn_param(line), false);
-
-        let line = ":some := dyn param";
-        assert_eq!(Request::is_dyn_param(line), true);
-
-        let line = "POST http://some.url";
-        assert_eq!(Request::is_dyn_param(line), false);
-    }
 }

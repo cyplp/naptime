@@ -27,6 +27,17 @@ impl ResponseExt for reqwest::Response {
 }
 
 #[derive(Debug)]
+enum LineType {
+    Comment,
+//    Target,
+    Header,
+//    Empty,
+    Body,
+    Param,
+    DynParam,
+}
+
+#[derive(Debug)]
 pub struct Parser<'a> {
     filename: &'a str,
 }
@@ -34,6 +45,40 @@ pub struct Parser<'a> {
 impl Parser<'_> {
     pub fn new(filename: &str) -> Parser {
         Parser {filename: filename}
+    }
+
+    fn type_line(&self, line: &str) -> LineType{
+        if line.starts_with('#') {
+            LineType::Comment
+        }
+        else if self.is_header(line){
+            LineType::Header
+        }
+        else if self.is_param(line){
+            LineType::Param
+        }
+        else if self.is_dyn_param(line) {
+            LineType::DynParam
+        }
+        else {LineType::Body}
+    }
+
+    fn is_header(&self, line: &str) -> bool {
+        // TODO refactor this
+        let is_header: Regex = Regex::new(r"^[\w-]+: .*$").unwrap();
+        is_header.is_match(line)
+    }
+
+    fn is_param(&self, line: &str) -> bool {
+        // TODO refactor this
+        let is_param = Regex::new(r":\w+ = .*$").unwrap();
+        is_param.is_match(line)
+    }
+
+    fn is_dyn_param(&self, line: &str) -> bool {
+        // TODO refactor this
+        let is_dyn_param = Regex::new(r":\w+ := .*$").unwrap();
+        is_dyn_param.is_match(line)
     }
 
     pub fn run(
@@ -86,5 +131,42 @@ mod test {
     fn test_new() {
         let p = Parser::new("some/file");
         assert_eq!(p.filename, "some/file");
+    }
+
+    #[test]
+    fn test_is_header() {
+        let p = Parser::new("some/file");
+
+        assert_eq!(p.is_header("Content: application/json"), true);
+        assert_eq!(p.is_header("Content :application/json"), false);
+        assert_eq!(p.is_header("http://some.url:80"), false);
+    }
+
+    #[test]
+    fn test_is_param() {
+        let p = Parser::new("some/file");
+
+        let line = ":some = param";
+        assert_eq!(p.is_param(line), true);
+
+        let line = ":some := dyn param";
+        assert_eq!(p.is_param(line), false);
+
+        let line = "POST http://some.url";
+        assert_eq!(p.is_param(line), false);
+    }
+
+    #[test]
+    fn test_is_dyn_param() {
+        let p = Parser::new("some/file");
+
+        let line = ":some = param";
+        assert_eq!(p.is_dyn_param(line), false);
+
+        let line = ":some := dyn param";
+        assert_eq!(p.is_dyn_param(line), true);
+
+        let line = "POST http://some.url";
+        assert_eq!(p.is_dyn_param(line), false);
     }
 }

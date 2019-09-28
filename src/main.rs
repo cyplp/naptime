@@ -3,14 +3,12 @@ extern crate clap;
 extern crate regex;
 
 use std::collections::HashMap;
-use std::vec::Vec;
 use std::time;
+use std::vec::Vec;
 
 use clap::{App, Arg};
 
 mod napstruct;
-
-
 
 fn main() {
     let matches = App::new(crate_name!())

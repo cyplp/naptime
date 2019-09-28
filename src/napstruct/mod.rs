@@ -1,4 +1,3 @@
-
 use reqwest;
 use std::collections::HashMap;
 
@@ -36,7 +35,6 @@ impl Request {
         self.verb.is_empty() || self.url.is_empty()
     }
 
-
     pub fn from_vec(buffer: Vec<String>) -> Request {
         let first = buffer[0].split(' ').collect::<Vec<&str>>();
 
@@ -48,20 +46,20 @@ impl Request {
         for line in buffer.iter().skip(1) {
             if !body {
                 // if Request::is_header(&line) {
-                    let headers = line.split(": ").collect::<Vec<&str>>();
-                    request.add_header(napheader::Header::new(
-                        headers[0].to_string(),
-                        headers[1..].join(": "),
-                    ));
-                // } else if Request::is_param(line) {
-                //     // TODO
+                let headers = line.split(": ").collect::<Vec<&str>>();
+                request.add_header(napheader::Header::new(
+                    headers[0].to_string(),
+                    headers[1..].join(": "),
+                ));
+            // } else if Request::is_param(line) {
+            //     // TODO
 
-                // } else if Request::is_dyn_param(line) {
-                //     //TODO
-                } else {
-                    body = true;
-                }
-//            }
+            // } else if Request::is_dyn_param(line) {
+            //     //TODO
+            } else {
+                body = true;
+            }
+            //            }
 
             if body {
                 tmp.push(line.to_string());
@@ -152,7 +150,6 @@ mod test {
         assert_eq!(r.is_empty(), true);
     }
 
-
     #[test]
     fn test_from_vec() {
         let v = vec![
@@ -189,6 +186,5 @@ mod test {
         r.fix_params(&params);
         assert_eq!(r.url, "http://some.url");
     }
-
 
 }

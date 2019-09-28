@@ -1,8 +1,8 @@
+use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::{thread, time};
-use regex::Regex;
 
 use crate::napstruct;
 
@@ -30,9 +30,9 @@ impl ResponseExt for reqwest::Response {
 #[derive(Debug)]
 enum LineType {
     Comment,
-//    Target,
+    //    Target,
     Header,
-//    Empty,
+    //    Empty,
     Body,
     Param,
     DynParam,
@@ -51,14 +51,11 @@ impl Parser<'_> {
     fn type_line(&self, line: &str) -> LineType{
         if line.starts_with('#') {
             LineType::Comment
-        }
-        else if self.is_header(line){
+        } else if self.is_header(line) {
             LineType::Header
-        }
-        else if self.is_param(line){
+        } else if self.is_param(line) {
             LineType::Param
-        }
-        else if self.is_dyn_param(line) {
+        } else if self.is_dyn_param(line) {
             LineType::DynParam
         }
         else {LineType::Body}
@@ -93,8 +90,7 @@ impl Parser<'_> {
 
         for line in BufReader::new(file.unwrap()).lines() {
             let current = line.unwrap();
-            match self.type_line(current.as_str())
-            {
+            match self.type_line(current.as_str()) {
                 LineType::Comment => {
                     if !tmp.is_empty() {
                         cpt += 1;

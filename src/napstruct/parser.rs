@@ -59,7 +59,7 @@ impl Parser<'_> {
         request
     }
 
-    fn type_line(&self, line: &str) -> LineType{
+    fn type_line(&self, line: &str) -> LineType {
         if line.starts_with('#') {
             LineType::Comment
         } else if self.is_header(line) {
@@ -99,11 +99,16 @@ impl Parser<'_> {
         is_dyn_param.is_match(line)
     }
 
-    pub fn run(
-        &self,
-        params: &HashMap<&str, &str>,
-        options: &napstruct::napoption::NapOptions,
-    ) {
+    // fn process_param<'a>(line: &str, mut params: HashMap<&str, &str>){
+    //     let tmp = line.split('=').collect::<Vec<&str>>();
+    //     let key = tmp[0][1..].trim();
+
+    //     let value = tmp[1].trim();
+
+    //     params.insert(key, value);
+    // }
+
+    pub fn run(&self, params: &HashMap<&str, &str>, options: &napstruct::napoption::NapOptions) {
         let file = File::open(self.filename);
         let mut tmp = Vec::<String>::new();
         let mut cpt = 0;
@@ -134,6 +139,9 @@ impl Parser<'_> {
                             }
                         }
                     }
+                }
+                LineType::Param => {
+
                 }
                 _ => {
                     tmp.push(current);

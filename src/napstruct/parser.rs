@@ -52,6 +52,11 @@ impl Parser<'_> {
         }
     }
 
+    fn new_request(&mut self, line: &str) -> napstruct::Request {
+        let tmp = line.split(' ').collect::<Vec<&str>>();
+        let request = napstruct::Request::new(tmp[0].to_string(), tmp[1..].join(" "));
+        self.in_request = true;
+        request
     }
 
     fn type_line(&self, line: &str) -> LineType{
@@ -146,6 +151,16 @@ mod test {
     fn test_new() {
         let p = Parser::new("some/file");
         assert_eq!(p.filename, "some/file");
+    }
+
+    #[test]
+    fn test_new_request() {
+        let mut p = Parser::new("some/file");
+        assert_eq!(p.in_request, false);
+
+        let line = "POST https://some.url";
+        let _r = p.new_request(line);
+        assert_eq!(p.in_request, true);
     }
 
     #[test]

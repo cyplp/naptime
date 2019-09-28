@@ -99,14 +99,14 @@ impl Parser<'_> {
         is_dyn_param.is_match(line)
     }
 
-    // fn process_param<'a>(line: &str, mut params: HashMap<&str, &str>){
-    //     let tmp = line.split('=').collect::<Vec<&str>>();
-    //     let key = tmp[0][1..].trim();
+    fn process_param<'a>(line: &'a str, params: &mut HashMap<&'a str, &'a str>){
+        let tmp = line.split('=').collect::<Vec<&str>>();
+        let key = tmp[0][1..].trim();
 
-    //     let value = tmp[1].trim();
+        let value = tmp[1].trim();
 
-    //     params.insert(key, value);
-    // }
+        params.insert(key, value);
+    }
 
     pub fn run(&self, params: &HashMap<&str, &str>, options: &napstruct::napoption::NapOptions) {
         let file = File::open(self.filename);
@@ -223,5 +223,16 @@ mod test {
 
         p.set_in_request(true);
         assert_eq!(p.is_in_request(), true);
+    }
+
+    #[test]
+    fn test_process_param() {
+        let mut params: HashMap<&str, &str> = HashMap::new();
+
+        Parser::process_param(":some = param", &mut params);
+        assert_eq!(params["some"], "param");
+
+        Parser::process_param(":some_other=foo", &mut params);
+        assert_eq!(params["some_other"], "foo");
     }
 }

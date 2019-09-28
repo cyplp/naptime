@@ -41,11 +41,17 @@ enum LineType {
 #[derive(Debug)]
 pub struct Parser<'a> {
     filename: &'a str,
+    in_request: bool,
 }
 
 impl Parser<'_> {
     pub fn new(filename: &str) -> Parser {
-        Parser {filename: filename}
+        Parser {
+            filename: filename,
+            in_request: false,
+        }
+    }
+
     }
 
     fn type_line(&self, line: &str) -> LineType{
@@ -57,8 +63,17 @@ impl Parser<'_> {
             LineType::Param
         } else if self.is_dyn_param(line) {
             LineType::DynParam
+        } else {
+            LineType::Body
         }
-        else {LineType::Body}
+    }
+
+    fn is_in_request(&self) -> bool {
+        self.in_request
+    }
+
+    fn set_in_request(&mut self, state: bool) {
+        self.in_request = state;
     }
 
     fn is_header(&self, line: &str) -> bool {
@@ -168,5 +183,22 @@ mod test {
 
         let line = "POST http://some.url";
         assert_eq!(p.is_dyn_param(line), false);
+    }
+
+    #[test]
+    fn test_in_request() {
+        let mut p = Parser::new("some/file");
+
+        assert_eq!(p.in_request, false);
+        assert_eq!(p.is_in_request(), false);
+
+        p.in_request = true;
+        assert_eq!(p.is_in_request(), true);
+
+        p.set_in_request(false);
+        assert_eq!(p.is_in_request(), false);
+
+        p.set_in_request(true);
+        assert_eq!(p.is_in_request(), true);
     }
 }

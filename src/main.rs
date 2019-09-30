@@ -71,5 +71,5 @@ fn main() {
 
     let filename = matches.value_of("file").unwrap();
     let parser = napstruct::parser::Parser::new(filename);
-    parser.run(&params, &no);
+    parser.run(&mut params, &no);
 }

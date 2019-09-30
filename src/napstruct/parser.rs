@@ -1,3 +1,4 @@
+
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
@@ -99,8 +100,8 @@ impl Parser<'_> {
         is_dyn_param.is_match(line)
     }
 
-    fn process_param<'a>(line: &'a str, params: &mut HashMap<&'a str, &'a str>){
-        let tmp = line.split('=').collect::<Vec<&str>>();
+    fn process_param<'a>(line: &'a str, params: &mut HashMap<&'a str, &'a str>) {
+        let tmp = &line.split('=').collect::<Vec<&str>>();
         let key = tmp[0][1..].trim();
 
         let value = tmp[1].trim();
@@ -108,7 +109,7 @@ impl Parser<'_> {
         params.insert(key, value);
     }
 
-    pub fn run(&self, params: &HashMap<&str, &str>, options: &napstruct::napoption::NapOptions) {
+    pub fn run<'a>(&self, mut params: &HashMap<&'a str, &'a str>, options: &napstruct::napoption::NapOptions) {
         let file = File::open(self.filename);
         let mut tmp = Vec::<String>::new();
         let mut cpt = 0;
@@ -141,7 +142,7 @@ impl Parser<'_> {
                     }
                 }
                 LineType::Param => {
-
+                   Parser::process_param(&current, &mut params);
                 }
                 _ => {
                     tmp.push(current);

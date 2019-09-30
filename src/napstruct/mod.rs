@@ -71,10 +71,10 @@ impl Request {
         request
     }
 
-    pub fn fix_params(&mut self, params: &HashMap<&str, &str>) {
+    pub fn fix_params(&mut self, params: &HashMap<String, String>) {
         for (key, value) in params {
             let tmp: String = format!(":{}", key);
-            self.url = self.url.replace(tmp.as_str(), value);
+            self.url = self.url.replace(tmp.as_str(), value.as_str());
         }
     }
 
@@ -180,8 +180,8 @@ mod test {
         let mut r = Request::from_vec(v);
         assert_eq!(r.url, ":url");
 
-        let mut params: HashMap<&str, &str> = HashMap::new();
-        params.insert("url", "http://some.url");
+        let mut params: HashMap<String, String> = HashMap::new();
+        params.insert("url".to_string(), "http://some.url".to_string());
 
         r.fix_params(&params);
         assert_eq!(r.url, "http://some.url");

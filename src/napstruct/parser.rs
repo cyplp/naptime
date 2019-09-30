@@ -100,16 +100,16 @@ impl Parser<'_> {
         is_dyn_param.is_match(line)
     }
 
-    fn process_param<'a>(line: &'a str, params: &mut HashMap<&'a str, &'a str>) {
+    fn process_param<'a>(line: &'a String, params: &mut HashMap<String, String>) {
         let tmp = &line.split('=').collect::<Vec<&str>>();
-        let key = tmp[0][1..].trim();
+        let key = tmp[0][1..].trim().to_string();
 
-        let value = tmp[1].trim();
+        let value = tmp[1].trim().to_string();
 
         params.insert(key, value);
     }
 
-    pub fn run<'a>(&self, mut params: &HashMap<&'a str, &'a str>, options: &napstruct::napoption::NapOptions) {
+    pub fn run<'a>(&self, mut params: &HashMap<String, String>, options: &napstruct::napoption::NapOptions) {
         let file = File::open(self.filename);
         let mut tmp = Vec::<String>::new();
         let mut cpt = 0;
@@ -128,7 +128,7 @@ impl Parser<'_> {
                             continue;
                         }
                         if !request.is_empty() {
-                            request.fix_params(&params);
+                            request.fix_params(params);
 
                             let mut res = request.send();
                             res.display_body();
@@ -142,7 +142,7 @@ impl Parser<'_> {
                     }
                 }
                 LineType::Param => {
-                   Parser::process_param(&current, &mut params);
+                    Parser::process_param(current, &mut params);
                 }
                 _ => {
                     tmp.push(current);
@@ -228,12 +228,12 @@ mod test {
 
     #[test]
     fn test_process_param() {
-        let mut params: HashMap<&str, &str> = HashMap::new();
+        let mut params: HashMap<String, String> = HashMap::new();
 
-        Parser::process_param(":some = param", &mut params);
+        Parser::process_param(&":some = param".to_string(), &mut params);
         assert_eq!(params["some"], "param");
 
-        Parser::process_param(":some_other=foo", &mut params);
+        Parser::process_param(&":some_other=foo".to_string(), &mut params);
         assert_eq!(params["some_other"], "foo");
     }
 }

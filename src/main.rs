@@ -63,10 +63,10 @@ fn main() {
     }
 
     // TODO function
-    let mut params: HashMap<&str, &str> = HashMap::new();
+    let mut params: HashMap<String, String> = HashMap::new();
     for current in matches.values_of("parameter").unwrap() {
         let tmp = current.split("=").collect::<Vec<&str>>();
-        params.insert(tmp[0], tmp[1]);
+        params.insert(tmp[0].to_string(), tmp[1].to_string());
     }
 
     let filename = matches.value_of("file").unwrap();

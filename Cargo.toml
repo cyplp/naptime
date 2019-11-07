@@ -8,3 +8,4 @@ edition = "2018"
 clap = "*"
 reqwest = "*"
 regex = "1"
+color-backtrace = { version = "0.2" }

@@ -11,6 +11,7 @@ use clap::{App, Arg};
 mod napstruct;
 
 fn main() {
+    color_backtrace::install();
     let matches = App::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())

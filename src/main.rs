@@ -33,7 +33,8 @@ fn main() {
             Arg::with_name("select")
                 .short("s")
                 .long("select")
-                .help("select only some requests as <index1,index2,index3...> start at 1")
+                .multiple(true)
+                .help("select only some requests as -s index1 -s index 2... start at 1")
                 .takes_value(true),
         )
         .arg(
@@ -53,15 +54,21 @@ fn main() {
     no.set_interval(interval);
 
     // TODO improve select parsing
-    let str_select = matches.value_of("select").unwrap_or("");
-    let selected: Vec<usize> = str_select
-        .split(",")
-        .map(|current| current.parse().unwrap())
-        .collect();
+    let selected = matches.values_of("select");
+    match selected {
+        Some(val) => {
+            for current in val{
+                let tmp = current.parse::<usize>();
+                match tmp {
+                    Ok(num) => { no.add_selected(num); }
+                    _ => { }
+                }
 
-    for select in selected {
-        no.add_selected(select);
+            }
+        }
+        None => { }
     }
+    // }
 
     // TODO function
     let mut params: HashMap<String, String> = HashMap::new();

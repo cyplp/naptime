@@ -109,7 +109,9 @@ impl Parser<'_> {
         params.insert(key, value);
     }
 
-    pub fn run<'a>(&self, mut params: &HashMap<String, String>, options: &napstruct::napoption::NapOptions) {
+    pub fn run<'a>(&self,
+		   params: &mut HashMap<String, String>,
+		   options: &napstruct::napoption::NapOptions) {
         let file = File::open(self.filename);
         let mut tmp = Vec::<String>::new();
         let mut cpt = 0;
@@ -142,7 +144,7 @@ impl Parser<'_> {
                     }
                 }
                 LineType::Param => {
-                    Parser::process_param(current, &mut params);
+                    Parser::process_param(&current, params);
                 }
                 _ => {
                     tmp.push(current);

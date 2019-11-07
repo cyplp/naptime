@@ -53,7 +53,6 @@ fn main() {
     let interval = time::Duration::from_millis(str_interval);
     no.set_interval(interval);
 
-    // TODO improve select parsing
     let selected = matches.values_of("select");
     match selected {
         Some(val) => {
@@ -63,12 +62,10 @@ fn main() {
                     Ok(num) => { no.add_selected(num); }
                     _ => { }
                 }
-
             }
         }
         None => { }
     }
-    // }
 
     // TODO function
     let mut params: HashMap<String, String> = HashMap::new();

@@ -90,7 +90,7 @@ impl Parser<'_> {
 
     fn is_param(&self, line: &str) -> bool {
         // TODO refactor this
-        let is_param = Regex::new(r"^:[^=]+?\s*=.+").unwrap();
+        let is_param = Regex::new(r"^:[^=]+?\s*[^:]=.+").unwrap();
         is_param.is_match(line)
     }
 

@@ -65,10 +65,19 @@ fn main() {
 
     // TODO function
     let mut params: HashMap<String, String> = HashMap::new();
-    for current in matches.values_of("parameter").unwrap() {
-        let tmp = current.split("=").collect::<Vec<&str>>();
-        params.insert(tmp[0].to_string(), tmp[1].to_string());
-    }
+    let values = matches.values_of("parameter");
+    match values {
+	Some(val) => {
+	    for current in val {
+		println!("{:?}", current);
+		// let tmp = current.split("=").collect::<Vec<&str>>();
+		// params.insert(tmp[0].to_string(), tmp[1].to_string());
+	    }
+
+	}
+	None => { }
+
+    };
 
     let filename = matches.value_of("file").unwrap();
     let parser = napstruct::parser::Parser::new(filename);

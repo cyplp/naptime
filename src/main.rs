@@ -76,11 +76,9 @@ fn main() {
     match values {
 	Some(val) => {
 	    for current in val {
-		println!("{:?}", current);
-		// let tmp = current.split("=").collect::<Vec<&str>>();
-		// params.insert(tmp[0].to_string(), tmp[1].to_string());
+		let tmp = current.split("=").collect::<Vec<&str>>();
+		params.insert(tmp[0].to_string(), tmp[1].to_string());
 	    }
-
 	}
 	None => { }
 

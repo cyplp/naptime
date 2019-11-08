@@ -1,4 +1,5 @@
 
+use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs::File;
@@ -84,20 +85,26 @@ impl Parser<'_> {
 
     fn is_header(&self, line: &str) -> bool {
         // TODO refactor this
-        let is_header: Regex = Regex::new(r"^[\w-]+: .*$").unwrap();
-        is_header.is_match(line)
+        lazy_static! {
+            static ref R : Regex = Regex::new(r"(?x) ^[\w-]+: \s .+").unwrap();
+        }
+        R.is_match(line)
     }
 
     fn is_param(&self, line: &str) -> bool {
         // TODO refactor this
-        let is_param = Regex::new(r"^:[^=]+?\s*[^:]=.+").unwrap();
-        is_param.is_match(line)
+        lazy_static! {
+            static ref R : Regex = Regex::new(r"^:[^=]+?\s*[^:]=.+").unwrap();
+        }
+        R.is_match(line)
     }
 
     fn is_dyn_param(&self, line: &str) -> bool {
         // TODO refactor this
-        let is_dyn_param = Regex::new(r":\w+ := .*$").unwrap();
-        is_dyn_param.is_match(line)
+        lazy_static! {
+            static ref R : Regex = Regex::new(r":\w+ := .*$").unwrap();
+        }
+        R.is_match(line)
     }
 
     fn process_param<'a>(line: &'a String, params: &mut HashMap<String, String>) {

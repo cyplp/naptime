@@ -2,8 +2,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::BufRead;
 use std::{thread, time};
 
 use crate::napstruct;
@@ -41,15 +40,13 @@ enum LineType {
 }
 
 #[derive(Debug)]
-pub struct Parser<'a> {
-    filename: &'a str,
+pub struct Parser {
     in_request: bool,
 }
 
-impl Parser<'_> {
-    pub fn new(filename: &str) -> Parser {
+impl Parser {
+    pub fn new() -> Parser {
         Parser {
-            filename: filename,
             in_request: false,
         }
     }
@@ -107,7 +104,7 @@ impl Parser<'_> {
         R.is_match(line)
     }
 
-    fn process_param<'a>(line: &'a String, params: &mut HashMap<String, String>) {
+    fn process_param(line: &String, params: &mut HashMap<String, String>) {
         let tmp = &line.split('=').collect::<Vec<&str>>();
         let key = tmp[0][1..].trim().to_string();
 
@@ -116,14 +113,14 @@ impl Parser<'_> {
         params.insert(key, value);
     }
 
-    pub fn run<'a>(&self,
+    pub fn run<R: BufRead>(&self,
+                   input: &mut R,
 		   params: &mut HashMap<String, String>,
 		   options: &napstruct::napoption::NapOptions) {
-        let file = File::open(self.filename);
         let mut tmp = Vec::<String>::new();
         let mut cpt = 0;
 
-        for line in BufReader::new(file.unwrap()).lines() {
+        for line in input.lines() {
             let current = line.unwrap();
             match self.type_line(current.as_str()) {
                 LineType::Comment => {
@@ -167,13 +164,13 @@ mod test {
 
     #[test]
     fn test_new() {
-        let p = Parser::new("some/file");
-        assert_eq!(p.filename, "some/file");
+        let p = Parser::new();
+        assert_eq!(p.in_request, false);
     }
 
     #[test]
     fn test_new_request() {
-        let mut p = Parser::new("some/file");
+        let mut p = Parser::new();
         assert_eq!(p.in_request, false);
 
         let line = "POST https://some.url";
@@ -183,7 +180,7 @@ mod test {
 
     #[test]
     fn test_is_header() {
-        let p = Parser::new("some/file");
+        let p = Parser::new();
 
         assert_eq!(p.is_header("Content: application/json"), true);
         assert_eq!(p.is_header("Content :application/json"), false);
@@ -192,7 +189,7 @@ mod test {
 
     #[test]
     fn test_is_param() {
-        let p = Parser::new("some/file");
+        let p = Parser::new();
 
         let line = ":some = param";
         assert_eq!(p.is_param(line), true);
@@ -206,7 +203,7 @@ mod test {
 
     #[test]
     fn test_is_dyn_param() {
-        let p = Parser::new("some/file");
+        let p = Parser::new();
 
         let line = ":some = param";
         assert_eq!(p.is_dyn_param(line), false);
@@ -220,7 +217,7 @@ mod test {
 
     #[test]
     fn test_in_request() {
-        let mut p = Parser::new("some/file");
+        let mut p = Parser::new();
 
         assert_eq!(p.in_request, false);
         assert_eq!(p.is_in_request(), false);
@@ -244,5 +241,18 @@ mod test {
 
         Parser::process_param(&":some_other=foo".to_string(), &mut params);
         assert_eq!(params["some_other"], "foo");
+    }
+
+    #[test]
+    fn test_run_online() {
+        let mut params: HashMap<String, String> = HashMap::new();
+        // Parser::process_param(&":some = param".to_string(), &mut params);
+        let no = napstruct::napoption::NapOptions::new();
+        let input = "# Localhost bug test
+GET http://localhost:3000";
+
+        let parser = napstruct::parser::Parser::new();
+        parser.run(&mut input.as_bytes(), &mut params, &no);
+        assert!(true);
     }
 }

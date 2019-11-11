@@ -81,7 +81,6 @@ impl Parser {
     }
 
     fn is_header(&self, line: &str) -> bool {
-        // TODO refactor this
         lazy_static! {
             static ref R : Regex = Regex::new(r"(?x) ^[\w-]+: \s .+").unwrap();
         }
@@ -89,7 +88,6 @@ impl Parser {
     }
 
     fn is_param(&self, line: &str) -> bool {
-        // TODO refactor this
         lazy_static! {
             static ref R : Regex = Regex::new(r"^:[^=]+?\s*[^:]=.+").unwrap();
         }
@@ -97,7 +95,6 @@ impl Parser {
     }
 
     fn is_dyn_param(&self, line: &str) -> bool {
-        // TODO refactor this
         lazy_static! {
             static ref R : Regex = Regex::new(r":\w+ := .*$").unwrap();
         }

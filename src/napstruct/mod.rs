@@ -46,7 +46,7 @@ impl Request {
         for line in buffer.iter().skip(1) {
             if !body {
                 // if Request::is_header(&line) {
-                let headers = line.split(": ").collect::<Vec<&str>>();
+                let headers = line.trim().split(": ").collect::<Vec<&str>>();
 		if headers.len() > 1 {
                 request.add_header(napheader::Header::new(
                     headers[0].to_string(),

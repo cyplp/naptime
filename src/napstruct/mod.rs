@@ -53,15 +53,9 @@ impl Request {
                     headers[1..].join(": "),
                 ));
 		}
-            // } else if Request::is_param(line) {
-            //     // TODO
-
-            // } else if Request::is_dyn_param(line) {
-            //     //TODO
             } else {
                 body = true;
             }
-            //            }
 
             if body {
                 tmp.push(line.to_string());

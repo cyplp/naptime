@@ -101,7 +101,7 @@ impl Parser {
         R.is_match(line)
     }
 
-    fn process_param(line: &String, params: &mut HashMap<String, String>) {
+    fn process_param(&self, line: &String, params: &mut HashMap<String, String>) {
         let tmp = &line.split('=').collect::<Vec<&str>>();
         let key = tmp[0][1..].trim().to_string();
 
@@ -232,11 +232,12 @@ mod test {
     #[test]
     fn test_process_param() {
         let mut params: HashMap<String, String> = HashMap::new();
+        let mut p = Parser::new();
 
-        Parser::process_param(&":some = param".to_string(), &mut params);
+        p.process_param(&":some = param".to_string(), &mut params);
         assert_eq!(params["some"], "param");
 
-        Parser::process_param(&":some_other=foo".to_string(), &mut params);
+        p.process_param(&":some_other=foo".to_string(), &mut params);
         assert_eq!(params["some_other"], "foo");
     }
 

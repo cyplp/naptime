@@ -110,6 +110,10 @@ impl Parser {
         params.insert(key, value);
     }
 
+    fn process_dyn_param(&self, line: &String, params: &mut HashMap<String, String>){
+	// TODO
+    }
+
     pub fn run<R: BufRead>(&self,
                    input: &mut R,
 		   params: &mut HashMap<String, String>,
@@ -145,8 +149,11 @@ impl Parser {
                     }
                 }
                 LineType::Param => {
-                    Parser::process_param(&current, params);
+                    self.process_param(&current, params);
                 }
+		LineType::DynParam => {
+		    self.process_dyn_param(&current, params);
+		}
                 _ => {
                     tmp.push(current);
                 }
@@ -252,5 +259,16 @@ GET http://localhost:3000";
         let parser = napstruct::parser::Parser::new();
         parser.run(&mut input.as_bytes(), &mut params, &no);
         assert!(true);
+    }
+
+    fn test_process_dyn_param() {
+        let mut params: HashMap<String, String> = HashMap::new();
+        let p = Parser::new();
+
+        p.process_dyn_param(&":some := param".to_string(), &mut params);
+        assert_eq!(params["some"], "param");
+
+        p.process_dyn_param(&":some_other:=foo".to_string(), &mut params);
+        assert_eq!(params["some_other"], "foo");
     }
 }

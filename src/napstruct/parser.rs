@@ -3,7 +3,6 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 use std::io::BufRead;
-use std::{thread, time};
 
 use crate::napstruct;
 
@@ -115,36 +114,17 @@ impl Parser {
 
     pub fn run<R: BufRead>(&self,
                    input: &mut R,
-		   params: &mut HashMap<String, String>,
-		   options: &napstruct::napoption::NapOptions) {
+		   params: &mut HashMap<String, String>) -> Vec::<Result<napstruct::Request,String>> {
         let mut tmp = Vec::<String>::new();
-        let mut cpt = 0;
+        let mut reqs = Vec::<Result<napstruct::Request,String>>::new();
 
         for line in input.lines() {
             let current = line.unwrap();
             match self.type_line(current.as_str()) {
                 LineType::Comment => {
                     if !tmp.is_empty() {
-                        cpt += 1;
-                        let mut request = napstruct::Request::from_vec(tmp);
-
+                        reqs.push(Ok(napstruct::Request::from_vec(tmp.to_vec())));
                         tmp = Vec::<String>::new();
-
-                        if !options.selecteds.is_empty() && !options.selecteds.contains(&cpt) {
-                            continue;
-                        }
-                        if !request.is_empty() {
-                            request.fix_params(params);
-
-                            let mut res = request.send();
-                            res.display_body();
-                            request.display();
-                            res.display_headers();
-
-                            if options.interval > time::Duration::from_millis(0) {
-                                thread::sleep(options.interval);
-                            }
-                        }
                     }
                 }
                 LineType::Param => {
@@ -155,6 +135,8 @@ impl Parser {
                 }
             }
         }
+
+        return reqs;
     }
 }
 #[cfg(test)]
@@ -247,12 +229,11 @@ mod test {
     fn test_run_online() {
         let mut params: HashMap<String, String> = HashMap::new();
         // Parser::process_param(&":some = param".to_string(), &mut params);
-        let no = napstruct::napoption::NapOptions::new();
         let input = "# Localhost bug test
 GET http://localhost:3000";
 
         let parser = napstruct::parser::Parser::new();
-        parser.run(&mut input.as_bytes(), &mut params, &no);
+        parser.run(&mut input.as_bytes(), &mut params);
         assert!(true);
     }
 }

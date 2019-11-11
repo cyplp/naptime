@@ -1,7 +1,10 @@
 #[macro_use]
 extern crate clap;
+extern crate lazy_static;
 extern crate regex;
 
+use std::io::BufReader;
+use std::fs::File;
 use std::collections::HashMap;
 use std::time;
 use std::vec::Vec;
@@ -82,6 +85,8 @@ fn main() {
     };
 
     let filename = matches.value_of("file").unwrap();
-    let parser = napstruct::parser::Parser::new(filename);
-    parser.run(&mut params, &no);
+    let file = File::open(filename);
+    let mut reader = BufReader::new(file.unwrap());
+    let parser = napstruct::parser::Parser::new();
+    parser.run(&mut reader, &mut params, &no);
 }

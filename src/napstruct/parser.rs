@@ -130,7 +130,7 @@ impl Parser {
 
                         tmp = Vec::<String>::new();
 
-                        if !options.selecteds.contains(&cpt) {
+                        if !options.selecteds.is_empty() && !options.selecteds.contains(&cpt) {
                             continue;
                         }
                         if !request.is_empty() {

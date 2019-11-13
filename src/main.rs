@@ -8,9 +8,12 @@ use std::io::{BufRead, BufReader};
 use std::fs::File;
 use std::collections::HashMap;
 use std::time;
+use std::thread;
 use std::vec::Vec;
 
 use clap::{App, Arg};
+
+use crate::napstruct::parser::ResponseExt;
 
 mod napstruct;
 
@@ -91,5 +94,32 @@ fn main() {
     };
 
     let parser = napstruct::parser::Parser::new();
-    parser.run(&mut reader, &mut params, &no);
+    let mut reqs = parser.run(&mut reader, &mut params);
+
+    for (i, r) in reqs.iter_mut().enumerate() {
+
+        if !no.selecteds.is_empty() && !no.selecteds.contains(&i) {
+            continue;
+        }
+
+        if r.is_err() {
+            println!("Cannot parse request {}", i);
+            continue;
+        }
+
+        let req = r.as_mut().unwrap();
+
+        if !req.is_empty() {
+            req.fix_params(&params);
+
+            let mut res = req.send();
+            res.display_body();
+            req.display();
+            res.display_headers();
+
+            if no.interval > time::Duration::from_millis(0) {
+                thread::sleep(no.interval);
+            }
+        }
+    }
 }

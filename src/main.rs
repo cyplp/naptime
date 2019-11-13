@@ -3,7 +3,8 @@ extern crate clap;
 extern crate lazy_static;
 extern crate regex;
 
-use std::io::BufReader;
+use std::io;
+use std::io::{BufRead, BufReader};
 use std::fs::File;
 use std::collections::HashMap;
 use std::time;
@@ -84,9 +85,11 @@ fn main() {
 
     };
 
-    let filename = matches.value_of("file").unwrap();
-    let file = File::open(filename);
-    let mut reader = BufReader::new(file.unwrap());
+    let mut reader : Box<dyn BufRead> = match matches.value_of("file") {
+        Some(filename) if filename != "-" => Box::new(BufReader::new(File::open(filename).unwrap())),
+        _ => Box::new(BufReader::new(io::stdin())),
+    };
+
     let parser = napstruct::parser::Parser::new();
     parser.run(&mut reader, &mut params, &no);
 }

@@ -60,5 +60,5 @@ OPTIONS:
 
 because I mostly write it during naps of my baby.
 
-![Rust](https://github.com/bdejean/cmd_cache/workflows/Rust/badge.svg)
+![Rust](https://github.com/cyplp/naptime/workflows/Rust/badge.svg)
 

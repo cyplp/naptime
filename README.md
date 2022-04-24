@@ -59,3 +59,6 @@ OPTIONS:
 ## name
 
 because I mostly write it during naps of my baby.
+
+![Rust](https://github.com/cyplp/naptime/workflows/Rust/badge.svg)
+

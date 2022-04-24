@@ -21,7 +21,7 @@ mod napstruct;
 #[ clap(author, version, about, long_about = None)]
 struct Args {
     /// File containing requests with restclient.el format
-    #[clap(short, long)]
+    #[clap(short, long, default_value = "-")]
     file: String,
 
     /// interval between two requests in milliseconds
@@ -58,9 +58,7 @@ fn main() {
     }
 
     let mut reader: Box<dyn BufRead> = match matches.file {
-        Some(filename) if filename != "-" => {
-            Box::new(BufReader::new(File::open(filename).unwrap()))
-        }
+        filename if filename != "-" => Box::new(BufReader::new(File::open(filename).unwrap())),
         _ => Box::new(BufReader::new(io::stdin())),
     };
 

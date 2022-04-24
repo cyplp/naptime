@@ -47,12 +47,12 @@ impl Request {
             if !body {
                 // if Request::is_header(&line) {
                 let headers = line.trim().split(": ").collect::<Vec<&str>>();
-		if headers.len() > 1 {
-                request.add_header(napheader::Header::new(
-                    headers[0].to_string(),
-                    headers[1..].join(": "),
-                ));
-		}
+                if headers.len() > 1 {
+                    request.add_header(napheader::Header::new(
+                        headers[0].to_string(),
+                        headers[1..].join(": "),
+                    ));
+                }
             } else {
                 body = true;
             }
@@ -182,5 +182,4 @@ mod test {
         r.fix_params(&params);
         assert_eq!(r.url, "http://some.url");
     }
-
 }

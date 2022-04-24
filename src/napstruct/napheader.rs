@@ -39,5 +39,4 @@ mod test {
         assert_ne!(h1, h3);
         assert_ne!(h1, h4);
     }
-
 }

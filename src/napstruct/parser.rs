@@ -1,4 +1,3 @@
-
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
@@ -45,9 +44,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new() -> Parser {
-        Parser {
-            in_request: false,
-        }
+        Parser { in_request: false }
     }
 
     fn new_request(&mut self, line: &str) -> napstruct::Request {
@@ -81,21 +78,21 @@ impl Parser {
 
     fn is_header(&self, line: &str) -> bool {
         lazy_static! {
-            static ref R : Regex = Regex::new(r"(?x) ^[\w-]+: \s .+").unwrap();
+            static ref R: Regex = Regex::new(r"(?x) ^[\w-]+: \s .+").unwrap();
         }
         R.is_match(line)
     }
 
     fn is_param(&self, line: &str) -> bool {
         lazy_static! {
-            static ref R : Regex = Regex::new(r"^:[^=]+?\s*[^:]=.+").unwrap();
+            static ref R: Regex = Regex::new(r"^:[^=]+?\s*[^:]=.+").unwrap();
         }
         R.is_match(line)
     }
 
     fn is_dyn_param(&self, line: &str) -> bool {
         lazy_static! {
-            static ref R : Regex = Regex::new(r":\w+ := .*$").unwrap();
+            static ref R: Regex = Regex::new(r":\w+ := .*$").unwrap();
         }
         R.is_match(line)
     }
@@ -109,15 +106,17 @@ impl Parser {
         params.insert(key, value);
     }
 
-    fn process_dyn_param(&self, line: &String, params: &mut HashMap<String, String>){
-	// TODO
+    fn process_dyn_param(&self, line: &String, params: &mut HashMap<String, String>) {
+        // TODO
     }
 
-    pub fn run<R: BufRead>(&self,
-                   input: &mut R,
-		   params: &mut HashMap<String, String>) -> Vec::<Result<napstruct::Request,String>> {
+    pub fn run<R: BufRead>(
+        &self,
+        input: &mut R,
+        params: &mut HashMap<String, String>,
+    ) -> Vec<Result<napstruct::Request, String>> {
         let mut tmp = Vec::<String>::new();
-        let mut reqs = Vec::<Result<napstruct::Request,String>>::new();
+        let mut reqs = Vec::<Result<napstruct::Request, String>>::new();
 
         for line in input.lines() {
             let current = line.unwrap();
@@ -131,9 +130,9 @@ impl Parser {
                 LineType::Param => {
                     self.process_param(&current, params);
                 }
-		LineType::DynParam => {
-		    self.process_dyn_param(&current, params);
-		}
+                LineType::DynParam => {
+                    self.process_dyn_param(&current, params);
+                }
                 _ => {
                     tmp.push(current);
                 }
